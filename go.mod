@@ -1,1 +1,1 @@
-module github.com/TakumiKaribe/gogit
+module github.com/TakumiKaribe/wyago
