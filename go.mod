@@ -1,1 +1,3 @@
-module github.com/TakumiKaribe/wyago
+module wyago
+
+go 1.15
