@@ -1,7 +1,8 @@
-package wyago
+package main
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -70,15 +71,33 @@ func runHashObject(cmd *cobra.Command, args []string) {
 }
 
 var _init = &cobra.Command{
-	Use:   "init",
-	Short: "init",
-	Long:  "init",
-	Args:  cobra.MinimumNArgs(1),
-	Run:   runInit,
-}
-
-func runInit(cmd *cobra.Command, args []string) {
-	fmt.Println("init: ", strings.Join(args, " "))
+	Use:     "init",
+	Long:    "initialize a new, empty repository",
+	Example: "init <directory>",
+	Args:    cobra.ExactArgs(1),
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		path := args[0]
+		fileInfo, err := os.Stat(path)
+		if err != nil {
+			return err
+		}
+		if !fileInfo.IsDir() {
+			return fmt.Errorf("%s is not directory", path)
+		}
+		return nil
+	},
+	Run: func(cmd *cobra.Command, args []string) {
+		path := args[0]
+		r, err := newRepository(path, true)
+		if err != nil {
+			err = fmt.Errorf("failed to new repository.\n\terror is caused by %w", err)
+			panic(err)
+		}
+		if err = r.create(); err != nil {
+			err = fmt.Errorf("failed to create repository.\n\terror is caused by %w", err)
+			panic(err)
+		}
+	},
 }
 
 var log = &cobra.Command{
