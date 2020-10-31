@@ -1,39 +1,23 @@
 package main
 
 import (
-	"flag"
 	"fmt"
-	"log"
+	"strings"
+
+	"github.com/spf13/cobra"
 )
 
 func main() {
-	flag.Parse()
-	argv := flag.Args()
-	if len(argv) < 1 {
-		log.Fatal("insufficient arguments")
+	print := &cobra.Command{
+		Use:   "print use",
+		Short: "print short",
+		Long:  "print long",
+		Args:  cobra.MinimumNArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Println("Print: ", strings.Join(args, " "))
+		},
 	}
-
-	cmd := flag.Arg(0)
-
-	switch cmd {
-	case "add",
-		"cat-file",
-		"checkout",
-		"commit",
-		"hash-object",
-		"init",
-		"log",
-		"ls-tree",
-		"merge",
-		"rebase",
-		"rev-parse",
-		"rm",
-		"show-ref",
-		"tag":
-		command(cmd)
-	}
-}
-
-func command(cmd string) {
-	fmt.Printf("your input command is %s\n", cmd)
+	rootCmd := &cobra.Command{Use: "wyago"}
+	rootCmd.AddCommand(print)
+	rootCmd.Execute()
 }
